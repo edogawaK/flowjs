@@ -1,0 +1,25 @@
+.option{
+    box-sizing: border-box;
+    cursor: pointer;
+    position: absolute;
+    width: 200px;
+    left: 20px;
+    box-shadow: 0 0 10px -2px;
+    border-radius: 10px;
+    padding: 10px;
+    z-index: 2;
+    background-color: white;
+    outline: none;
+}
+
+.option:hover{
+    border: 2px solid;
+}
+
+.option select{
+    width: 100%;
+    border: none;
+    outline: none;
+    height: 20px;
+    cursor: pointer;
+}

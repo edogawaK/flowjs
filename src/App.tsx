@@ -15,6 +15,7 @@ import { useBFD } from "./hooks/useBFD";
 import BFD from "./components/BFD";
 import { useAKT } from "./hooks/useAKT";
 import { HaNoiTower, HaNoiTowerNode } from "./models/HaNoiTower";
+import Options from "./components/Options";
 
 export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -71,6 +72,7 @@ export default function App() {
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
+      {/* <Options /> */}
       <ReactFlow
         nodes={nodes}
         edges={edges}
