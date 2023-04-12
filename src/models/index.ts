@@ -1,19 +1,24 @@
 import { Edge, Node, XYPosition } from "reactflow";
 import { v4 as uuid } from "uuid";
-export interface Data {
-  toString(): string;
-}
-let id = 0;
-export class DataNode {
-  public id: string;
-  public nears: DataNode[];
-  public position: XYPosition = { x: 0, y: 0 };
-  public type: "target" | "checked" | "wait";
 
-  constructor(nears: DataNode[], type: "target" | "checked" | "wait" = "wait") {
+let id = 0;
+
+export class DataNode<T> {
+  public id: string;
+  public data: T;
+  public nears: DataNode<T>[];
+  public position: XYPosition = { x: 0, y: 0 };
+  public status: "target" | "checked" | "wait";
+
+  constructor(
+    data: T,
+    nears: DataNode<T>[],
+    status: "target" | "checked" | "wait" = "wait"
+  ) {
     this.id = "" + id++;
+    this.data = data;
     this.nears = nears;
-    this.type = type;
+    this.status = status;
   }
 
   public toString() {
@@ -29,9 +34,9 @@ export class DataNode {
       position: this.position,
       style: {
         color:
-          this.type === "target"
+          this.status === "target"
             ? "green"
-            : this.type === "checked"
+            : this.status === "checked"
             ? "red"
             : "pink",
       },
@@ -48,7 +53,7 @@ export class DataNode {
     );
   }
 
-  public addNear(child: DataNode) {
+  public addNear(child: DataNode<T>) {
     this.nears.push(child);
   }
 
@@ -59,22 +64,27 @@ export class DataNode {
       nears: this.nears.map((near) => near.toJSON()),
     };
   }
+
+  public findNears(): DataNode<T>[] {
+    return [];
+  }
+
+  public f(): number {
+    return this.g() + this.f();
+  }
+
+  public g(): number {
+    return 0;
+  }
+
+  public h(): number {
+    return 0;
+  }
+
+  public isDestination(): boolean {
+    return false;
+  }
 }
-
-// export class DataGraph {
-//   public nodes: DataNode<>[];
-//   public beginNodeId?: string;
-//   public endNodeId?: string;
-
-//   constructor(params: {
-//     nodes: DataNode[];
-//     beginNodeId: string;
-//     endNodeId?: string;
-//   }) {
-//     const { beginNodeId, nodes = [], endNodeId } = params;
-//     this.nodes = nodes;
-//   }
-// }
 
 export class Bottle {
   public capacity;
@@ -111,126 +121,130 @@ export class Bottle {
   }
 }
 
-export class Bottles extends DataNode {
-  public bottle1: Bottle;
-  public bottle2: Bottle;
+// export class Bottles extends DataNode {
+//   public bottle1: Bottle;
+//   public bottle2: Bottle;
 
-  constructor(bottle1: Bottle, bottle2: Bottle, nears: Bottles[]) {
-    super(nears);
-    this.bottle1 = bottle1;
-    this.bottle2 = bottle2;
-  }
+//   constructor(bottle1: Bottle, bottle2: Bottle, nears: Bottles[]) {
+//     super(nears);
+//     this.bottle1 = bottle1;
+//     this.bottle2 = bottle2;
+//   }
 
-  // public toString(): string {
-  //   return `Bottle1: ${this.bottle1.current}/${this.bottle1.capacity}||Bottle2: ${this.bottle2.current}/${this.bottle2.capacity}`;
-  // }
+//   // public toString(): string {
+//   //   return `Bottle1: ${this.bottle1.current}/${this.bottle1.capacity}||Bottle2: ${this.bottle2.current}/${this.bottle2.capacity}`;
+//   // }
 
-  public generateFromBottle1(): Bottles[] {
-    let temp1: Bottle, temp2: Bottle;
-    let newOpenState: Bottles[] = [];
-    //->A
-    if (this.bottle1.isEmpty()) {
-      temp1 = this.bottle1.clone();
-      temp1.fill();
-      let state = new Bottles(temp1, this.bottle2, []);
-      newOpenState.push(state);
-      this.addNear(state);
-    }
+//   public generateFromBottle1(): Bottles[] {
+//     let temp1: Bottle, temp2: Bottle;
+//     let newOpenState: Bottles[] = [];
+//     //->A
+//     if (this.bottle1.isEmpty()) {
+//       temp1 = this.bottle1.clone();
+//       temp1.fill();
+//       let state = new Bottles(temp1, this.bottle2, []);
+//       newOpenState.push(state);
+//       this.addNear(state);
+//     }
 
-    //A->
-    // if (this.bottle1.isFull()) {
-    //   if (this.bottle2.isFull()) {
-    //     temp1 = this.bottle1.clone();
-    //     temp1.pourOut();
-    //     let state = new Bottles(temp1, this.bottle2, []);
-    //     newOpenState.push(state);
-    //     this.addNear(state);
-    //   } else {
-    //     temp1 = this.bottle1.clone();
-    //     temp2 = this.bottle2.clone();
-    //     temp2.fill(temp1.pourOut(temp2.emptySize()));
-    //     let state = new Bottles(temp1, temp2, []);
-    //     newOpenState.push(state);
-    //     this.addNear(state);
-    //   }
-    // }
-    if (!this.bottle1.isEmpty()) {
-      temp1 = this.bottle1.clone();
-      temp1.pourOut();
-      let state = new Bottles(temp1, this.bottle2, []);
-      newOpenState.push(state);
-      this.addNear(state);
+//     //A->
+//     // if (this.bottle1.isFull()) {
+//     //   if (this.bottle2.isFull()) {
+//     //     temp1 = this.bottle1.clone();
+//     //     temp1.pourOut();
+//     //     let state = new Bottles(temp1, this.bottle2, []);
+//     //     newOpenState.push(state);
+//     //     this.addNear(state);
+//     //   } else {
+//     //     temp1 = this.bottle1.clone();
+//     //     temp2 = this.bottle2.clone();
+//     //     temp2.fill(temp1.pourOut(temp2.emptySize()));
+//     //     let state = new Bottles(temp1, temp2, []);
+//     //     newOpenState.push(state);
+//     //     this.addNear(state);
+//     //   }
+//     // }
+//     if (!this.bottle1.isEmpty()) {
+//       temp1 = this.bottle1.clone();
+//       temp1.pourOut();
+//       let state = new Bottles(temp1, this.bottle2, []);
+//       newOpenState.push(state);
+//       this.addNear(state);
 
-      if (!this.bottle2.isFull()) {
-        temp1 = this.bottle1.clone();
-        temp2 = this.bottle2.clone();
-        temp2.fill(temp1.pourOut(temp2.emptySize()));
-        let state = new Bottles(temp1, temp2, []);
-        newOpenState.push(state);
-        this.addNear(state);
-      }
-    }
-    return newOpenState;
-  }
+//       if (!this.bottle2.isFull()) {
+//         temp1 = this.bottle1.clone();
+//         temp2 = this.bottle2.clone();
+//         temp2.fill(temp1.pourOut(temp2.emptySize()));
+//         let state = new Bottles(temp1, temp2, []);
+//         newOpenState.push(state);
+//         this.addNear(state);
+//       }
+//     }
+//     return newOpenState;
+//   }
 
-  public generateFromBottle2(): Bottles[] {
-    let temp1: Bottle, temp2: Bottle;
-    let newOpenState: Bottles[] = [];
-    //->A
-    if (this.bottle2.isEmpty()) {
-      temp2 = this.bottle2.clone();
-      temp2.fill();
-      let state = new Bottles(this.bottle1, temp2, []);
-      newOpenState.push(state);
-      this.addNear(state);
-    }
+//   public generateFromBottle2(): Bottles[] {
+//     let temp1: Bottle, temp2: Bottle;
+//     let newOpenState: Bottles[] = [];
+//     //->A
+//     if (this.bottle2.isEmpty()) {
+//       temp2 = this.bottle2.clone();
+//       temp2.fill();
+//       let state = new Bottles(this.bottle1, temp2, []);
+//       newOpenState.push(state);
+//       this.addNear(state);
+//     }
 
-    //A->
-    // if (this.bottle2.isFull()) {
-    //   if (this.bottle1.isFull()) {
-    //     temp2 = this.bottle2.clone();
-    //     temp2.pourOut();
-    //     let state = new Bottles(this.bottle1, temp2, []);
-    //     newOpenState.push(state);
-    //     this.addNear(state);
-    //   } else {
-    //     temp1 = this.bottle1.clone();
-    //     temp2 = this.bottle2.clone();
-    //     temp1.fill(temp2.pourOut(temp1.emptySize()));
-    //     let state = new Bottles(temp1, temp2, []);
-    //     newOpenState.push(state);
-    //     this.addNear(state);
-    //   }
-    // }
-    if (!this.bottle2.isEmpty()) {
-      temp2 = this.bottle2.clone();
-      temp2.pourOut();
-      let state = new Bottles(this.bottle1, temp2, []);
-      newOpenState.push(state);
-      this.addNear(state);
+//     //A->
+//     // if (this.bottle2.isFull()) {
+//     //   if (this.bottle1.isFull()) {
+//     //     temp2 = this.bottle2.clone();
+//     //     temp2.pourOut();
+//     //     let state = new Bottles(this.bottle1, temp2, []);
+//     //     newOpenState.push(state);
+//     //     this.addNear(state);
+//     //   } else {
+//     //     temp1 = this.bottle1.clone();
+//     //     temp2 = this.bottle2.clone();
+//     //     temp1.fill(temp2.pourOut(temp1.emptySize()));
+//     //     let state = new Bottles(temp1, temp2, []);
+//     //     newOpenState.push(state);
+//     //     this.addNear(state);
+//     //   }
+//     // }
+//     if (!this.bottle2.isEmpty()) {
+//       temp2 = this.bottle2.clone();
+//       temp2.pourOut();
+//       let state = new Bottles(this.bottle1, temp2, []);
+//       newOpenState.push(state);
+//       this.addNear(state);
 
-      if (!this.bottle1.isFull()) {
-        temp1 = this.bottle1.clone();
-        temp2 = this.bottle2.clone();
-        temp1.fill(temp2.pourOut(temp1.emptySize()));
-        let state = new Bottles(temp1, temp2, []);
-        newOpenState.push(state);
-        this.addNear(state);
-      }
-    }
-    return newOpenState;
-  }
+//       if (!this.bottle1.isFull()) {
+//         temp1 = this.bottle1.clone();
+//         temp2 = this.bottle2.clone();
+//         temp1.fill(temp2.pourOut(temp1.emptySize()));
+//         let state = new Bottles(temp1, temp2, []);
+//         newOpenState.push(state);
+//         this.addNear(state);
+//       }
+//     }
+//     return newOpenState;
+//   }
 
-  public isDestination() {
-    if (this.bottle1.current == 2 || this.bottle2.current == 2) {
-      this.type = "target";
-      return true;
-    }
-    this.type = "checked";
-    return false;
-  }
+//   public findNears(): Bottles[] {
+//     return [...this.generateFromBottle1(), ...this.generateFromBottle2()];
+//   }
 
-  public toString() {
-    return `Bottle1: ${this.bottle1.current}/${this.bottle1.capacity}||Bottle2: ${this.bottle2.current}/${this.bottle2.capacity}`;
-  }
-}
+//   public isDestination() {
+//     if (this.bottle1.current == 2 || this.bottle2.current == 2) {
+//       this.status = "target";
+//       return true;
+//     }
+//     this.status = "checked";
+//     return false;
+//   }
+
+//   public toString() {
+//     return `Bottle1: ${this.bottle1.current}/${this.bottle1.capacity}||Bottle2: ${this.bottle2.current}/${this.bottle2.capacity}`;
+//   }
+// }
