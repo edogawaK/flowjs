@@ -66,6 +66,7 @@ export class HaNoiTowerNode extends DataNode {
       this.status = "target";
       return true;
     }
+    this.status = "checked";
     return false;
   }
 

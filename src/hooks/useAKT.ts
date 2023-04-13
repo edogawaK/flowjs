@@ -12,7 +12,6 @@ const AKT = (rootNode: DataNode, images: DataNode[][]) => {
     if (node.isDestination()) return node;
 
     let newNodes = node.findNears();
-    node.status = "checked";
     openNodes.push(...newNodes);
     images.push([...openNodes]);
   }

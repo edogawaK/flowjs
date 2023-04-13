@@ -1,19 +1,22 @@
 import { Edge, Node } from "reactflow";
-import { v4 } from "uuid";
-
+let index = 0;
 export abstract class DataNode {
   public id: string;
+  public parent?: DataNode;
   public nears: DataNode[];
   public status: "target" | "checked" | "wait" | "checking";
 
   constructor(props: {
     nears: DataNode[];
     status: "target" | "checked" | "wait" | "checking";
+    id?: string;
+    parent?: DataNode;
   }) {
-    const { nears = [], status = "wait" } = props;
-    this.id = v4();
+    const { nears = [], status = "wait", id = "" + index++, parent } = props;
+    this.id = id;
     this.nears = nears;
     this.status = status;
+    this.parent = parent;
   }
 
   public getNode(): Node {
@@ -63,6 +66,16 @@ export abstract class DataNode {
 
     return bestNode;
   };
+
+  public getRoad() {
+    const road: DataNode[] = [];
+    let node: DataNode | undefined = this;
+    do {
+      road.unshift(node);
+      node = node.parent;
+    } while (node);
+    return road;
+  }
 
   abstract getDataString(): string;
   abstract findNears(): DataNode[];

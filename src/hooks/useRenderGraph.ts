@@ -1,13 +1,16 @@
 import dagre from "dagre";
 import { Edge } from "reactflow";
-import { DataNode } from "../models";
+import { DataNode } from "../models/DataNode";
+
+import _ from "lodash";
 
 export const useRenderGraph = (dataNodes: DataNode[]) => {
   const nodes = dataNodes.map((node) => node.getNode());
-  const edges = dataNodes.reduce((edges: Edge[], node: DataNode) => {
+  let edges = dataNodes.reduce((edges: Edge[], node: DataNode) => {
     edges.push(...node.getEdges());
     return edges;
   }, []);
+  edges = _.uniqBy(edges, "id");
 
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
