@@ -18,51 +18,8 @@ const BFD = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [opens, setOpens] = useState<CityNode[]>([]);
 
-  // useLayoutEffect(() => {
-  //   let { images: data, openImages } = useA();
-  //   let stateIndex = 0;
-  //   let interval = setInterval(() => {
-  //     if (stateIndex == data.length) {
-  //       clearInterval(interval);
-  //       return;
-  //     }
-  //     let { nodes, edges } = useRenderGraph(data[stateIndex]);
-  //     setNodes(nodes);
-  //     setEdges(edges);
-  //     setOpens(openImages[stateIndex] ?? []);
-  //     stateIndex++;
-  //   }, 2000);
-  // }, []);
-  // useLayoutEffect(() => {
-  //   let data = useAKT({
-  //     rootNode: new HaNoiTowerNode({
-  //       data: new HaNoiTower({
-  //         columnA: [1],
-  //         columnB: [2],
-  //         columnC: [3],
-  //         count: 3,
-  //       }),
-  //       g: 0,
-  //       nears: [],
-  //       status: "wait",
-  //     }),
-  //   });
-  //   let stateIndex = 0;
-  //   let interval = setInterval(() => {
-  //     if (stateIndex == data.length) {
-  //       clearInterval(interval);
-  //       return;
-  //     }
-  //     let { nodes, edges } = useRenderGraph(data[stateIndex++]);
-  //     setNodes(nodes);
-  //     setEdges(edges);
-  //   }, 1000);
-  // }, []);
   useLayoutEffect(() => {
-    let data = useBFD({
-      initBottle1: 4,
-      initBottle2: 3,
-    });
+    let data = useBFD();
     let stateIndex = 0;
     let interval = setInterval(() => {
       if (stateIndex == data.length) {

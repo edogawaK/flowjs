@@ -2,25 +2,29 @@ import React, { FC } from "react";
 import "./index.css";
 
 interface OptionsProps {
-  onChange: (e: string) => void;
+  onChange: (e: any) => void;
+  value: string;
 }
 
 const Options: FC<OptionsProps> = (props) => {
-  const { onChange } = props;
+  const { onChange, value } = props;
   return (
     <div className="option">
-      <select name="cars" id="cars">
-        <option className="option__item" value="volvo">
+      <select name="options" id="options" onChange={onChange} value={value}>
+        <option className="option__item" value="bfs">
           BFS
         </option>
-        <option className="option__item" value="saab">
-          DFS
-        </option>
-        <option className="option__item" value="mercedes">
+        <option className="option__item" value="akt">
           AKT
         </option>
-        <option className="option__item" value="audi">
+        <option className="option__item" value="a-star">
           A Star
+        </option>
+        <option className="option__item" value="welsh-powell">
+          Welsh Powell
+        </option>
+        <option className="option__item" value="ds">
+          DS
         </option>
       </select>
     </div>

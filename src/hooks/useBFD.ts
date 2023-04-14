@@ -1,30 +1,30 @@
-import { Bottle } from "../models";
+import { DataNode } from "../models";
+import { Bottle, Bottles } from "../models";
 
-export const useBFD = (props: { initBottle1: number; initBottle2: number }) => {
-  const { initBottle1, initBottle2 } = props;
-
-  let rootNode: Bottles = new Bottles(
-    new Bottle(initBottle1),
-    new Bottle(initBottle2),
-    []
-  );
-
-  let nodes: Bottles[][] = [[rootNode]];
-
+export const useBFD = () => {
+  let bottles: Bottles = new Bottles(new Bottle(4), new Bottle(3), []);
+  let states: Bottles[][] = [[bottles]];
   const BFD = (bottles: Bottles) => {
     const opens: Bottles[] = [bottles];
 
     while (opens.length != 0) {
-      const node: Bottles = opens[0];
-      if (node.isDestination()) return node;
-      let newNodes = node.findNears();
-      opens.push(...newNodes);
-      nodes.push([...nodes[nodes.length - 1], ...newNodes]);
+      const currentState: Bottles = opens[0];
+      if (currentState.isDestination()) break;
+      // console.log("step-----------------------------");
+      // console.log("focus", currentState.toString());
+      let newStateFromBottle1 = currentState.generateFromBottle1();
+      let newStateFromBottle2 = currentState.generateFromBottle2();
+      opens.push(...newStateFromBottle1, ...newStateFromBottle2);
+      states.push([
+        ...states[states.length - 1],
+        ...newStateFromBottle1,
+        ...newStateFromBottle2,
+      ]);
       // opens.forEach((state) => console.log(state.toString()));
       opens.shift();
     }
+    return bottles;
   };
-
-  const targetNode = BFD(rootNode);
-  return nodes;
+  const state = BFD(bottles);
+  return states;
 };
