@@ -1,4 +1,4 @@
-import { Bottle, Bottles } from "../models";
+import { Bottle } from "../models";
 
 export const useBFD = (props: { initBottle1: number; initBottle2: number }) => {
   const { initBottle1, initBottle2 } = props;

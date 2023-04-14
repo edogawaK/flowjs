@@ -1,12 +1,17 @@
 import dagre from "dagre";
-import { Edge } from "reactflow";
+import { Edge, Node } from "reactflow";
 import { DataNode } from "../models/DataNode";
 
 import _ from "lodash";
 
-export const useRenderGraph = (dataNodes: DataNode[]) => {
+export interface CanDrawGraph {
+  getNode: () => Node;
+  getEdges: () => Edge[];
+}
+
+export const useRenderGraph = (dataNodes: CanDrawGraph[]) => {
   const nodes = dataNodes.map((node) => node.getNode());
-  let edges = dataNodes.reduce((edges: Edge[], node: DataNode) => {
+  let edges = dataNodes.reduce((edges: Edge[], node: CanDrawGraph) => {
     edges.push(...node.getEdges());
     return edges;
   }, []);
